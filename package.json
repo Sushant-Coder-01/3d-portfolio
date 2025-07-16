@@ -1,0 +1,29 @@
+{
+  "name": "3d-portfolio",
+  "version": "1.0.0",
+  "description": "🎨 An interactive 3D developer portfolio built with Three.js, React Three Fiber (R3F), GSAP, React, and TypeScript — crafted for a visually rich web experience.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sushant-Coder-01/3d-portfolio.git"
+  },
+  "keywords": [
+    "three.js",
+    "react",
+    "gsap",
+    "r3f",
+    "typescript"
+  ],
+  "author": "Sushant Mangore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sushant-Coder-01/3d-portfolio/issues"
+  },
+  "homepage": "https://github.com/Sushant-Coder-01/3d-portfolio#readme",
+  "dependencies": {
+    "vite": "^7.0.4"
+  }
+}
