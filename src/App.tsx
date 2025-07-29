@@ -1,13 +1,15 @@
+// App.tsx or Home.tsx
 import { Canvas } from "@react-three/fiber";
-import React from "react";
+import World from "./components/World";
 
 function App() {
   return (
-    <React.Fragment>
-      <Canvas
-        style={{ width: "full", height: "100dvh", backgroundColor: "black" }}
-      ></Canvas>
-    </React.Fragment>
+    <Canvas
+      camera={{ position: [0, 10, 20], fov: 40 }}
+      style={{ height: "100dvh" }}
+    >
+      <World />
+    </Canvas>
   );
 }
 
