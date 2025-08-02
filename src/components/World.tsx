@@ -116,7 +116,7 @@ const World = () => {
 
       {/* Player */}
       <RigidBody type="fixed" colliders="trimesh">
-        <Player />
+        <Player position={[70, 13, 50]} rotation={[0,-Math.PI /1.5, 0]}/>
       </RigidBody>
 
       {/* Debug Animations */}

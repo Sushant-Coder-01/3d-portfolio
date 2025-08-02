@@ -1,25 +1,47 @@
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF, useAnimations, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
-export default function Player() {
-  const { scene, animations } = useGLTF("/players/result.gltf");
-  const { actions } = useAnimations(animations, scene);
+type PlayerProps = {
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+};
 
-  const playerRef = useRef<THREE.Object3D>(null!);
+const Player: React.FC<PlayerProps> = ({ position = [0, 0, 0], rotation = [0, 0, 0] }) => {
+  const { scene, animations } = useGLTF("/standing_man/scene.gltf");
+  const { actions } = useAnimations(animations, scene);
+  animations[0].duration = 1;
+  // Group for movement (keep skeleton intact)
+  const groupRef = useRef<THREE.Group>(null!);
+  const orbitRef = useRef<any>(null);
   const { camera } = useThree();
 
   const [keys, setKeys] = useState({ w: false, s: false, a: false, d: false });
 
+  // Start animation once
+  useEffect(() => {
+    const walkAction = actions["Take 001"];
+    if (walkAction) {
+      walkAction.reset().fadeIn(0.2).play();
+      walkAction.setLoop(THREE.LoopRepeat, Infinity); // Loop animation indefinitely
+      walkAction.timeScale = 1; // Set a normal speed initially
+      walkAction.setEffectiveTimeScale(1); // Ensure effective speed is applied
+      walkAction.time = 2.2; // Skip the first part of the animation (start after the slow part)
+    }
+  }, [actions]);
+
+  // Keyboard handling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() in keys)
+      if (e.key.toLowerCase() in keys) {
         setKeys((k) => ({ ...k, [e.key.toLowerCase()]: true }));
+      }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() in keys)
+      if (e.key.toLowerCase() in keys) {
         setKeys((k) => ({ ...k, [e.key.toLowerCase()]: false }));
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
@@ -29,48 +51,76 @@ export default function Player() {
     };
   }, []);
 
-  // useFrame((_, delta) => {
-  //   const moveSpeed = 4;
-  //   const rotateSpeed = 2;
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    const player = groupRef.current;
 
-  //   if (!playerRef.current) return;
+    const moveSpeed = 4;
+    const rotateSpeed = 2;
+    let isMoving = false;
 
-  //   let moving = false;
-  //   const player = playerRef.current;
+    // Rotate player
+    if (keys.a) {
+      player.rotation.y += rotateSpeed * delta;
+      isMoving = true;
+    }
+    if (keys.d) {
+      player.rotation.y -= rotateSpeed * delta;
+      isMoving = true;
+    }
 
-  //   if (keys.a) {
-  //     player.rotation.y += rotateSpeed * delta;
-  //   }
-  //   if (keys.d) {
-  //     player.rotation.y -= rotateSpeed * delta;
-  //   }
+    // Move player forward/back
+    const forward = new THREE.Vector3(0, 0, 1).applyEuler(player.rotation);
+    if (keys.w) {
+      player.position.addScaledVector(forward, moveSpeed * delta);
+      isMoving = true;
+    }
+    if (keys.s) {
+      player.position.addScaledVector(forward, -moveSpeed * delta);
+      isMoving = true;
+    }
 
-  //   const forward = new THREE.Vector3(0, 0, 1).applyEuler(player.rotation);
-  //   if (keys.w) {
-  //     player.position.addScaledVector(forward, moveSpeed * delta);
-  //     moving = true;
-  //   }
-  //   if (keys.s) {
-  //     player.position.addScaledVector(forward, -moveSpeed * delta);
-  //     moving = true;
-  //   }
+    // Animate walking
+    const walkAction = actions["Take 001"];
+    if (walkAction) {
+      if (isMoving) {
+        walkAction.timeScale = 1; // Play animation normally when moving
+        walkAction.time = 0.5; // Continue from the mid-point, avoiding the slow start
+      } else {
+        walkAction.timeScale = 0; // Freeze animation when idle
+      }
+    }
 
-  //   if (moving) {
-  //     actions["Walk"]?.fadeIn(0.2).play();
-  //     actions["Idle"]?.fadeOut(0.2);
-  //   } else {
-  //     actions["Walk"]?.fadeOut(0.2);
-  //     actions["Idle"]?.fadeIn(0.2).play();
-  //   }
+    // Fix root motion: prevent translation
+    const rootBone = scene.getObjectByName("mixamorigHips"); // root bone name may vary
+    if (rootBone) {
+      rootBone.position.set(0, rootBone.position.y, 0); // lock X & Z to 0
+    }
 
-  //   const playerPos = player.position;
-  //   const offset = new THREE.Vector3(0, 1.2, -5);
+    // Camera follow
+    if (orbitRef.current) {
+      orbitRef.current.target.copy(player.position);
+    }
 
-  //   const cameraOffset = offset.clone().applyEuler(player.rotation);
+    if (isMoving) {
+      if (orbitRef.current) orbitRef.current.enabled = false;
+      const offset = new THREE.Vector3(0, 1.2, -5).applyEuler(player.rotation);
+      const targetPos = player.position.clone().add(offset);
+      camera.position.lerp(targetPos, 0.1);
+      camera.lookAt(player.position);
+    } else {
+      if (orbitRef.current) orbitRef.current.enabled = true;
+    }
+  });
 
-  //   camera.position.lerp(playerPos.clone().add(cameraOffset), 0.1);
-  //   camera.lookAt(playerPos);
-  // });
+  return (
+    <>
+      <group ref={groupRef} scale={0.5} position={position} rotation={rotation}>
+        <primitive object={scene} />
+      </group>
+      <OrbitControls ref={orbitRef} enablePan enableZoom enableRotate />
+    </>
+  );
+};
 
-  return <primitive ref={playerRef} object={scene} scale={0.003} />;
-}
+export default Player;

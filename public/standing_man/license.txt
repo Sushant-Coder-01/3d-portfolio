@@ -1,0 +1,11 @@
+Model Information:
+* title:	Scanned animated walking man
+* source:	https://sketchfab.com/3d-models/scanned-animated-walking-man-bfbb95c3cb2b4e89a20d3d201b05045f
+* author:	1-3D.com (https://sketchfab.com/1-3D.com)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Scanned animated walking man" (https://sketchfab.com/3d-models/scanned-animated-walking-man-bfbb95c3cb2b4e89a20d3d201b05045f) by 1-3D.com (https://sketchfab.com/1-3D.com) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
