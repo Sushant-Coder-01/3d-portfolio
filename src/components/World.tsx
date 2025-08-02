@@ -61,20 +61,32 @@ const World = () => {
       />
 
       <Hill
-        position={[0, 0, 0]}
-        width={80}
-        depth={80}
-        height={12}
-        color="#4CAF50"
-      />
-      <Hill
-        position={[40, 0, -30]}
-        width={40}
-        depth={40}
-        height={8}
+        position={[50, 0, -50]}
+        width={50}
+        depth={50}
+        height={10}
         color="#3E8E41"
       />
-      <Hill position={[-50, 0, -40]} width={60} depth={60} height={10} />
+
+      <Hill
+        position={[50, 0, 50]}
+        width={100}
+        depth={100}
+        height={50}
+        complexity={0.05}
+        falloffStrength={2}
+        color="#4CAF50"
+      />
+
+      <Hill
+        position={[-75, 0, -70]}
+        rotation={[0, Math.PI, 0]}
+        width={50}
+        depth={60}
+        height={20}
+        complexity={0.12}
+        color="#388E3C"
+      />
 
       <Tree position={[6, 0, 4]} height={6} />
       <Tree position={[2, 0, 12]} height={7} />
