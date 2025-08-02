@@ -37,18 +37,13 @@ const World = () => {
         color="#deb887"
       />
 
-      <River width={4} length={40} position={[0, -2.2, -15]} />
+      <River width={10} length={100} position={[-50, -1, 50]} />
+      <River width={5} length={75} position={[-12, -2.2, -50]} />
       <River
         width={5}
-        length={40}
-        curvePoints={[
-          [-20, 0, 0],
-          [-10, 0, 4],
-          [0, 0, 0],
-          [10, 0, -3],
-          [20, 0, 2],
-        ]}
-        position={[0, -2.2, -30]}
+        length={30}
+        position={[-85, -2.2, -36]}
+        rotation={[Math.PI, -0.2, 0]}
       />
 
       <Bridge position={[0, 0.5, -15]} length={6} width={2.5} color="#8B4513" />
@@ -88,17 +83,16 @@ const World = () => {
         color="#388E3C"
       />
 
-      <Tree position={[6, 0, 4]} height={6} />
-      <Tree position={[2, 0, 12]} height={7} />
-      <Tree position={[-8, 0, -2]} height={5} trunkRadius={0.2} />
-
-      {Array.from({ length: 10 }).map((_, i) => (
-        <Tree
-          key={i}
-          position={[Math.random() * 30 - 15, 0, Math.random() * 30 - 15]}
-          height={5 + Math.random() * 3}
-        />
-      ))}
+      <Tree position={[70, 0, -20]} height={6} />
+      <Tree position={[60, 0, 0]} height={7} />
+      <Tree position={[40, 1, 15]} height={5} trunkRadius={0.2} />
+      <Tree position={[20, 0, -60]} height={5} />
+      <Tree position={[5, 0, -40]} height={5} />
+      <Tree position={[0, 0, 0]} height={5} />
+      <Tree position={[10, 0.2, 20]} height={5} />
+      <Tree position={[-50, 0, 30]} height={5} />
+      <Tree position={[-20, 0, 5]} height={5} />
+      <Tree position={[-50, 0, 0]} height={5} />
 
       <Player />
 

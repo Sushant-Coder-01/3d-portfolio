@@ -7,6 +7,7 @@ interface RiverProps {
   color?: string;
   curvePoints?: [number, number, number][];
   position?: [number, number, number];
+  rotation?: [number, number, number];
 }
 
 const River: React.FC<RiverProps> = ({
@@ -15,6 +16,7 @@ const River: React.FC<RiverProps> = ({
   color = "#1E90FF",
   curvePoints,
   position = [0, 0.01, 0],
+  rotation = [0, 0, 0],
 }) => {
   const curve = useMemo(() => {
     const points = curvePoints?.map((p) => new THREE.Vector3(...p)) || [
@@ -32,7 +34,13 @@ const River: React.FC<RiverProps> = ({
   }, [curve, width]);
 
   return (
-    <mesh geometry={tubeGeometry} position={position} castShadow receiveShadow>
+    <mesh
+      geometry={tubeGeometry}
+      position={position}
+      rotation={rotation}
+      castShadow
+      receiveShadow
+    >
       <meshStandardMaterial
         color={color}
         roughness={0.2}
