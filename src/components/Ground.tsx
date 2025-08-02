@@ -1,8 +1,15 @@
-const Ground = () => {
+import React from "react";
+
+interface GroundProps {
+  size?: number;
+  color?: string;
+}
+
+const Ground: React.FC<GroundProps> = ({ size = 100, color = "#228B22" }) => {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[100, 100]} />
-      <meshStandardMaterial color="#228B22" /> {/* grass green */}
+      <planeGeometry args={[size, size]} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 };
