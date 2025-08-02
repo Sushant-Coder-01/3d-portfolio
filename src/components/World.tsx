@@ -17,24 +17,49 @@ const World = () => {
       <Controls />
       <Ground size={200} color="#3CB371" />
 
-      <Road width={4} length={50} />
+      <Road width={4} length={50} position={[-30, 0.02, 5]} />
       <Road width={6} length={150} color="#333" position={[0, 0.01, -10]} />
-      <Road width={2} length={30} color="#555" position={[0, 0.01, -20]} />
+      <Road width={2} length={30} color="#555" position={[-60, 0.01, 20]} />
 
-      <House position={[-10, 0, -5]} width={6} depth={5} height={3.5} />
+      <House position={[-30, 0, -18]} width={6} depth={5} height={3.5} />
       <House
-        position={[12, 0, -3]}
+        position={[-8, 0, -18]}
         width={7}
         depth={6}
         height={4}
         roofColor="#a52a2a"
       />
       <House
-        position={[0, 0, 10]}
+        position={[-50, 0, -18]}
         width={3}
         depth={3}
         height={2.5}
         color="#deb887"
+      />
+     
+     <House
+        position={[-8, 0, -2]}
+        rotation={[0, Math.PI , 0]}
+        width={7}
+        depth={6}
+        height={4}
+        roofColor="#a52a2a"
+      />
+      <House
+        position={[-30, 0, -2]}
+        rotation={[0, Math.PI , 0]}
+        width={7}
+        depth={6}
+        height={4}
+        roofColor="#a52a2a"
+      />
+      <House
+        position={[-50, 0, -2]}
+        rotation={[0, Math.PI , 0]}
+        width={7}
+        depth={6}
+        height={4}
+        roofColor="#a52a2a"
       />
 
       <River width={10} length={100} position={[-50, 0, 50]} />
@@ -92,8 +117,8 @@ const World = () => {
       <Tree position={[0, 0, 0]} height={5} />
       <Tree position={[10, 0.2, 20]} height={5} />
       <Tree position={[-50, 0, 30]} height={5} />
-      <Tree position={[-20, 0, 5]} height={5} />
-      <Tree position={[-50, 0, 0]} height={5} />
+      <Tree position={[-20, 0, 0]} height={5} />
+      <Tree position={[-40, 0, 0]} height={5} />
 
       <Player />
 

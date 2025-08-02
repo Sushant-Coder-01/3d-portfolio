@@ -7,6 +7,7 @@ interface HouseProps {
   height?: number;
   color?: string;
   roofColor?: string;
+  rotation?: [number, number, number];
 }
 
 const House: React.FC<HouseProps> = ({
@@ -16,11 +17,12 @@ const House: React.FC<HouseProps> = ({
   height = 4,
   color = "#d2b48c",
   roofColor = "#8b0000",
+  rotation = [0, 0, 0],
 }) => {
   const roofHeight = height * 0.6;
 
   return (
-    <group position={position} castShadow receiveShadow>
+    <group position={position} castShadow receiveShadow rotation={rotation}>
       <mesh castShadow receiveShadow position={[0, height / 2, 0]}>
         <boxGeometry args={[width, height, depth]} />
         <meshStandardMaterial color={color} />
