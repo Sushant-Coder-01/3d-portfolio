@@ -37,20 +37,21 @@ const World = () => {
         color="#deb887"
       />
 
-      <River width={10} length={100} position={[-50, -1, 50]} />
-      <River width={5} length={75} position={[-12, -2.2, -50]} />
+      <River width={10} length={100} position={[-50, 0, 50]} />
+      <River width={5} length={75} position={[-12, 0, -50]} />
       <River
         width={5}
         length={30}
-        position={[-85, -2.2, -36]}
+        position={[-85, 0, -36]}
         rotation={[Math.PI, -0.2, 0]}
       />
 
-      <Bridge position={[0, 0.5, -15]} length={6} width={2.5} color="#8B4513" />
+      <Bridge position={[5, 0.5, -52]} span={12} width={6} />
       <Bridge
-        position={[5, 0.5, -30]}
-        length={8}
-        width={3}
+        position={[-20, 1, 48]}
+        rotation={[0, -Math.PI / 1, 0]}
+        span={16}
+        width={12}
         color="#A9A9A9"
         railColor="#555"
       />
