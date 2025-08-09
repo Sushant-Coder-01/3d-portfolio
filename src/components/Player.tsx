@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, useAnimations, OrbitControls } from "@react-three/drei";
+import { useFBX, useAnimations } from "@react-three/drei";
+import { RigidBody, RapierRigidBody, CapsuleCollider } from "@react-three/rapier";
 import * as THREE from "three";
 
 type PlayerProps = {
@@ -8,118 +9,145 @@ type PlayerProps = {
   rotation?: [number, number, number];
 };
 
-const Player: React.FC<PlayerProps> = ({ position = [0, 0, 0], rotation = [0, 0, 0] }) => {
-  const { scene, animations } = useGLTF("/standing_man/scene.gltf");
-  const { actions } = useAnimations(animations, scene);
-  animations[0].duration = 1;
-  // Group for movement (keep skeleton intact)
-  const groupRef = useRef<THREE.Group>(null!);
-  const orbitRef = useRef<any>(null);
+const Player: React.FC<PlayerProps> = ({
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+}) => {
+  const group = useRef<THREE.Group>(null);
+  const bodyRef = useRef<RapierRigidBody>(null);
   const { camera } = useThree();
 
-  const [keys, setKeys] = useState({ w: false, s: false, a: false, d: false });
+  // Load model & animations
+  const fbx = useFBX("/standard_walk.fbx");
+  const { actions, names } = useAnimations(fbx.animations, group);
 
-  // Start animation once
-  useEffect(() => {
-    const walkAction = actions["Take 001"];
-    if (walkAction) {
-      walkAction.reset().fadeIn(0.2).play();
-      walkAction.setLoop(THREE.LoopRepeat, Infinity); // Loop animation indefinitely
-      walkAction.timeScale = 1; // Set a normal speed initially
-      walkAction.setEffectiveTimeScale(1); // Ensure effective speed is applied
-      walkAction.time = 2.2; // Skip the first part of the animation (start after the slow part)
-    }
-  }, [actions]);
+  const [keys, setKeys] = useState<{ [key: string]: boolean }>({});
 
-  // Keyboard handling
+  // Keyboard input handlers
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() in keys) {
-        setKeys((k) => ({ ...k, [e.key.toLowerCase()]: true }));
-      }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() in keys) {
-        setKeys((k) => ({ ...k, [e.key.toLowerCase()]: false }));
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    const down = (e: KeyboardEvent) => setKeys((k) => ({ ...k, [e.key.toLowerCase()]: true }));
+    const up = (e: KeyboardEvent) => setKeys((k) => ({ ...k, [e.key.toLowerCase()]: false }));
+
+    window.addEventListener("keydown", down);
+    window.addEventListener("keyup", up);
+
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
     };
   }, []);
 
-  useFrame((_, delta) => {
-    if (!groupRef.current) return;
-    const player = groupRef.current;
-
-    const moveSpeed = 4;
-    const rotateSpeed = 2;
-    let isMoving = false;
-
-    // Rotate player
-    if (keys.a) {
-      player.rotation.y += rotateSpeed * delta;
-      isMoving = true;
-    }
-    if (keys.d) {
-      player.rotation.y -= rotateSpeed * delta;
-      isMoving = true;
-    }
-
-    // Move player forward/back
-    const forward = new THREE.Vector3(0, 0, 1).applyEuler(player.rotation);
-    if (keys.w) {
-      player.position.addScaledVector(forward, moveSpeed * delta);
-      isMoving = true;
-    }
-    if (keys.s) {
-      player.position.addScaledVector(forward, -moveSpeed * delta);
-      isMoving = true;
-    }
-
-    // Animate walking
-    const walkAction = actions["Take 001"];
+  // Initialize animation once
+  useEffect(() => {
+    if (names.length === 0) return;
+    const walkName = names.includes("mixamo.com") ? "mixamo.com" : names[0];
+    const walkAction = actions[walkName];
     if (walkAction) {
-      if (isMoving) {
-        walkAction.timeScale = 1; // Play animation normally when moving
-        walkAction.time = 0.5; // Continue from the mid-point, avoiding the slow start
-      } else {
-        walkAction.timeScale = 0; // Freeze animation when idle
-      }
+      walkAction.reset().fadeIn(0.2).play();
+      walkAction.setLoop(THREE.LoopRepeat, Infinity);
+      walkAction.timeScale = 0; // pause initially
     }
+  }, [actions, names]);
 
-    // Fix root motion: prevent translation
-    const rootBone = scene.getObjectByName("mixamorigHips"); // root bone name may vary
-    if (rootBone) {
-      rootBone.position.set(0, rootBone.position.y, 0); // lock X & Z to 0
-    }
+  const speed = 4;
+  const cameraOffset = new THREE.Vector3(0, 2, 5); // Behind & above player
 
-    // Camera follow
-    if (orbitRef.current) {
-      orbitRef.current.target.copy(player.position);
-    }
+  // For smooth camera start
+  const initialCameraSet = useRef(false);
 
-    if (isMoving) {
-      if (orbitRef.current) orbitRef.current.enabled = false;
-      const offset = new THREE.Vector3(0, 1.2, -5).applyEuler(player.rotation);
-      const targetPos = player.position.clone().add(offset);
-      camera.position.lerp(targetPos, 0.1);
-      camera.lookAt(player.position);
+  useFrame(() => {
+    if (!bodyRef.current || !group.current) return;
+
+    // Movement input
+    const forward = keys["w"] || keys["arrowup"];
+    const back = keys["s"] || keys["arrowdown"];
+    const left = keys["a"] || keys["arrowleft"];
+    const right = keys["d"] || keys["arrowright"];
+
+    // Local movement vector before rotation
+    const localMove = new THREE.Vector3();
+    if (forward) localMove.z -= 1;
+    if (back) localMove.z += 1;
+    if (left) localMove.x -= 1;
+    if (right) localMove.x += 1;
+
+    const walkAction = actions[names[0]];
+
+    if (localMove.length() > 0) {
+      localMove.normalize();
+
+      // Convert local movement to world movement based on player's current rotation
+      // Note: group.current.rotation.y is the player's facing angle
+      const moveDirWorld = localMove.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), group.current.rotation.y);
+
+      // Rotate player to face movement direction smoothly (optional: lerp rotation)
+      const targetAngle = Math.atan2(moveDirWorld.x, moveDirWorld.z);
+      // Smooth rotation:
+      const currentY = group.current.rotation.y;
+      const lerpFactor = 0.2;
+      group.current.rotation.y = THREE.MathUtils.lerp(currentY, targetAngle, lerpFactor);
+
+      // Move physics body (preserve vertical velocity)
+      const currentVel = bodyRef.current.linvel();
+      bodyRef.current.setLinvel(
+        { x: moveDirWorld.x * speed, y: currentVel.y, z: moveDirWorld.z * speed },
+        true
+      );
+
+      if (walkAction) walkAction.timeScale = 1; // play animation
     } else {
-      if (orbitRef.current) orbitRef.current.enabled = true;
+      // No input: stop horizontal movement, preserve vertical velocity
+      const currentVel = bodyRef.current.linvel();
+      bodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 }, true);
+
+      if (walkAction) walkAction.timeScale = 0; // pause animation
     }
+
+    // Get player position
+    const translation = bodyRef.current.translation();
+    const playerPos = new THREE.Vector3(translation.x, translation.y, translation.z);
+
+    // Calculate camera target position: offset behind player (based on current player rotation)
+    const rotatedOffset = cameraOffset.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), group.current.rotation.y);
+    const targetCamPos = playerPos.clone().add(rotatedOffset);
+
+    // Smoothly move camera position
+    if (!initialCameraSet.current) {
+      camera.position.copy(targetCamPos);
+      initialCameraSet.current = true;
+    } else {
+      camera.position.lerp(targetCamPos, 0.1);
+    }
+
+    // Smoothly rotate camera to look at player (using quaternions for smooth rotation)
+    const lookAtMatrix = new THREE.Matrix4().lookAt(camera.position, playerPos, new THREE.Vector3(0, 1, 0));
+    const targetQuat = new THREE.Quaternion().setFromRotationMatrix(lookAtMatrix);
+    camera.quaternion.slerp(targetQuat, 0.1);
   });
 
+  // Lock player rotations to prevent tipping
+  useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.lockRotations(true, false);
+    }
+  }, []);
+
   return (
-    <>
-      <group ref={groupRef} scale={0.5} position={position} rotation={rotation}>
-        <primitive object={scene} />
+    <RigidBody
+      ref={bodyRef}
+      type="dynamic"
+      position={position}
+      rotation={rotation}
+      colliders={false}
+      mass={80}
+      linearDamping={0.8}
+      angularDamping={1}
+    >
+      <CapsuleCollider args={[0.9, 0.3]} position={[0, 0.9, 0]} />
+      <group ref={group} scale={0.005} dispose={null}>
+        <primitive object={fbx} />
       </group>
-      <OrbitControls ref={orbitRef} enablePan enableZoom enableRotate />
-    </>
+    </RigidBody>
   );
 };
 

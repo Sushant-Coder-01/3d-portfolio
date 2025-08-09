@@ -1,8 +1,8 @@
-import { useGLTF } from "@react-three/drei";
+import { useFBX } from "@react-three/drei";
 import { useEffect } from "react";
 
 export default function DebugAnimations() {
-  const { animations } = useGLTF("/standing_man/scene.gltf");
+  const { animations } = useFBX("/standard_walk.fbx");
   console.log(animations)
   useEffect(() => {
     console.log(

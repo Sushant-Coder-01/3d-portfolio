@@ -7,18 +7,16 @@ import River from "./River";
 import Bridge from "./Bridge";
 import Hill from "./Hill";
 import Tree from "./Tree";
-import Player from "./Player";
 import DebugAnimations from "./DebugAnimation";
 import { Physics, RigidBody } from "@react-three/rapier";
+import Player from "./Player";
 
 const World = () => {
   return (
     <Physics gravity={[0, -9.81, 0]}>
       <Lights />
       <Controls />
-      <RigidBody type="fixed">
         <Ground size={200} color="#3CB371" />
-      </RigidBody>
 
       {/* Roads */}
       <RigidBody type="fixed">
@@ -115,9 +113,7 @@ const World = () => {
       </RigidBody>
 
       {/* Player */}
-      <RigidBody type="fixed" colliders="trimesh">
         <Player position={[70, 13, 50]} rotation={[0,-Math.PI /1.5, 0]}/>
-      </RigidBody>
 
       {/* Debug Animations */}
       <DebugAnimations />
