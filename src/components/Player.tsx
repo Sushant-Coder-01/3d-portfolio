@@ -49,81 +49,91 @@ const Player: React.FC<PlayerProps> = ({
     }
   }, [actions, names]);
 
-  const speed = 4;
+  const speed = 1;
   const cameraOffset = new THREE.Vector3(0, 2, 5); // Behind & above player
 
   // For smooth camera start
   const initialCameraSet = useRef(false);
 
-  useFrame(() => {
-    if (!bodyRef.current || !group.current) return;
+useFrame(() => {
+  if (!bodyRef.current || !group.current) return;
 
-    // Movement input
-    const forward = keys["w"] || keys["arrowup"];
-    const back = keys["s"] || keys["arrowdown"];
-    const left = keys["a"] || keys["arrowleft"];
-    const right = keys["d"] || keys["arrowright"];
+  // Movement input
+  const forward = keys["w"] || keys["arrowup"];
+  const back = keys["s"] || keys["arrowdown"];
+  const left = keys["a"] || keys["arrowleft"];
+  const right = keys["d"] || keys["arrowright"];
 
-    // Local movement vector before rotation
-    const localMove = new THREE.Vector3();
-    if (forward) localMove.z -= 1;
-    if (back) localMove.z += 1;
-    if (left) localMove.x -= 1;
-    if (right) localMove.x += 1;
+  const walkAction = actions[names[0]];
 
-    const walkAction = actions[names[0]];
+  // --- Get current rotation from body ---
+  const rotationY = group.current.rotation.y;
 
-    if (localMove.length() > 0) {
-      localMove.normalize();
+  // --- ROTATION with A/D ---
+  let newRotationY = rotationY;
+  if (left) newRotationY += 0.005;   // turn left
+  if (right) newRotationY -= 0.005;  // turn right
+  group.current.rotation.y = newRotationY; // update mesh
+  bodyRef.current.setRotation(
+    { x: 0, y: newRotationY, z: 0, w: 1 }, // quaternion (approx)
+    true
+  );
 
-      // Convert local movement to world movement based on player's current rotation
-      // Note: group.current.rotation.y is the player's facing angle
-      const moveDirWorld = localMove.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), group.current.rotation.y);
+  // --- MOVEMENT with W/S ---
+  let moveDir = new THREE.Vector3(0, 0, 0);
+  if (forward) moveDir.z = -1;
+  if (back) moveDir.z = 1;
 
-      // Rotate player to face movement direction smoothly (optional: lerp rotation)
-      const targetAngle = Math.atan2(moveDirWorld.x, moveDirWorld.z);
-      // Smooth rotation:
-      const currentY = group.current.rotation.y;
-      const lerpFactor = 0.2;
-      group.current.rotation.y = THREE.MathUtils.lerp(currentY, targetAngle, lerpFactor);
+  if (moveDir.length() > 0) {
+    moveDir.normalize();
 
-      // Move physics body (preserve vertical velocity)
-      const currentVel = bodyRef.current.linvel();
-      bodyRef.current.setLinvel(
-        { x: moveDirWorld.x * speed, y: currentVel.y, z: moveDirWorld.z * speed },
-        true
-      );
+    // Apply facing rotation (relative to Y rotation of body)
+    moveDir.applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY);
 
-      if (walkAction) walkAction.timeScale = 1; // play animation
-    } else {
-      // No input: stop horizontal movement, preserve vertical velocity
-      const currentVel = bodyRef.current.linvel();
-      bodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 }, true);
+    const currentVel = bodyRef.current.linvel();
+    bodyRef.current.setLinvel(
+      { x: moveDir.x * speed, y: currentVel.y, z: moveDir.z * speed },
+      true
+    );
 
-      if (walkAction) walkAction.timeScale = 0; // pause animation
-    }
+    if (walkAction) walkAction.timeScale = 1;
+  } else {
+    const currentVel = bodyRef.current.linvel();
+    bodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 }, true);
 
-    // Get player position
-    const translation = bodyRef.current.translation();
-    const playerPos = new THREE.Vector3(translation.x, translation.y, translation.z);
+    if (walkAction) walkAction.timeScale = 0;
+  }
 
-    // Calculate camera target position: offset behind player (based on current player rotation)
-    const rotatedOffset = cameraOffset.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), group.current.rotation.y);
-    const targetCamPos = playerPos.clone().add(rotatedOffset);
+  // --- CAMERA FOLLOW ---
+const translation = bodyRef.current.translation();
+const playerPos = new THREE.Vector3(translation.x, translation.y, translation.z);
 
-    // Smoothly move camera position
-    if (!initialCameraSet.current) {
-      camera.position.copy(targetCamPos);
-      initialCameraSet.current = true;
-    } else {
-      camera.position.lerp(targetCamPos, 0.1);
-    }
+// Rotate the offset so camera stays behind player
+const rotatedOffset = cameraOffset
+  .clone()
+  .applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY);
 
-    // Smoothly rotate camera to look at player (using quaternions for smooth rotation)
-    const lookAtMatrix = new THREE.Matrix4().lookAt(camera.position, playerPos, new THREE.Vector3(0, 1, 0));
-    const targetQuat = new THREE.Quaternion().setFromRotationMatrix(lookAtMatrix);
-    camera.quaternion.slerp(targetQuat, 0.1);
-  });
+const targetCamPos = playerPos.clone().add(rotatedOffset);
+
+// Smoothly move camera
+if (!initialCameraSet.current) {
+  camera.position.copy(targetCamPos);
+  initialCameraSet.current = true;
+} else {
+  camera.position.lerp(targetCamPos, 0.1);
+}
+
+// 👀 Look slightly ahead of the player instead of at feet
+const lookAtTarget = playerPos
+  .clone()
+  .add(new THREE.Vector3(0, 1.5, 0)) // look at chest/head height
+  .add(new THREE.Vector3(0, 0, -5).applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY)); // ahead in facing direction
+
+camera.lookAt(lookAtTarget);
+
+});
+
+
 
   // Lock player rotations to prevent tipping
   useEffect(() => {
