@@ -49,7 +49,7 @@ const Player: React.FC<PlayerProps> = ({
     }
   }, [actions, names]);
 
-  const speed = 1;
+  const speed = 4;
   const cameraOffset = new THREE.Vector3(0, 2, 5); // Behind & above player
 
   // For smooth camera start
