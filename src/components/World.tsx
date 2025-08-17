@@ -113,7 +113,7 @@ const World = () => {
       </RigidBody>
 
       {/* Player */}
-        <Player position={[70, 13, 50]} rotation={[0,-Math.PI /1.5, 0]}/>
+        <Player position={[70, 15, 50]} rotation={[0,-Math.PI /1.5, 0]}/>
 
       {/* Debug Animations */}
       <DebugAnimations />

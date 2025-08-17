@@ -50,9 +50,9 @@ const Player: React.FC<PlayerProps> = ({
   }, [actions, names]);
 
   const speed = 4;
-  const cameraOffset = new THREE.Vector3(0, 2, 5); // Behind & above player
+  const cameraOffset = new THREE.Vector3(0, 2 , 5); // Behind & above player
 
-  // For smooth camera start
+  // For smooth camera start  
   const initialCameraSet = useRef(false);
 
 useFrame(() => {
@@ -75,7 +75,7 @@ useFrame(() => {
   if (right) newRotationY -= 0.005;  // turn right
   group.current.rotation.y = newRotationY; // update mesh
   bodyRef.current.setRotation(
-    { x: 0, y: newRotationY, z: 0, w: 1 }, // quaternion (approx)
+    { x: 0, y: newRotationY, z: 0, w: 0 }, // quaternion (approx)
     true
   );
 
