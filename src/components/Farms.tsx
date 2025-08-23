@@ -8,13 +8,21 @@ export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 
     const riceModel = scene.clone();
     riceModel.traverse((child: any) => {
         if (child.isMesh) {
+            const green = new THREE.Color("#228B22"); // dark green
+            const gold = new THREE.Color("#FFD700");  // golden yellow
+
+            // Mix mostly green, small touch of gold
+            const mixedColor = green.clone().lerp(gold, Math.random() * 0.4); // 0–20% gold
+
             child.material = new THREE.MeshStandardMaterial({
-                color: "#DAA520",
+                color: mixedColor,
                 roughness: 0.8,
                 metalness: 0.2,
             });
         }
     });
+
+
 
     return (
         <group position={position}>

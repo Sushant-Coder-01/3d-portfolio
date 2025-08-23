@@ -1,0 +1,11 @@
+Model Information:
+* title:	African Buffalo
+* source:	https://sketchfab.com/3d-models/african-buffalo-10430df80e6446f2a77cb0ba93ed5cd1
+* author:	kenchoo (https://sketchfab.com/kenchoo)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "African Buffalo" (https://sketchfab.com/3d-models/african-buffalo-10430df80e6446f2a77cb0ba93ed5cd1) by kenchoo (https://sketchfab.com/kenchoo) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

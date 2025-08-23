@@ -171,11 +171,21 @@ const World = () => {
 
       {/* Cow */}
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/cow/scene.gltf" position={[10, 0.2, 10]} scale={1} />
+        <Animal path="/cow/scene.gltf" position={[20, 0.2, 10]} scale={1} />
+      </RigidBody>
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/cow2/scene.gltf" position={[18, 0.2, 10]} scale={0.1} />
+      </RigidBody>
+
+      {/* Horse */}
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/horse/scene.gltf" position={[0, 0.2, 10]} scale={1} />
       </RigidBody>
 
       {/* Buffalo */}
-      <Animal path="/buffalo/scene.gltf" position={[5, 0, 4]} />
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/african_buffalo/scene.gltf" position={[3, 0.2, 10]} scale={0.2} />
+      </RigidBody>
 
       {/* Big central lake */}
       <Lake position={[30, 0.02, 50]} width={60} height={60} waveStrength={0.01} />
@@ -204,7 +214,7 @@ const World = () => {
 
 
       {/* Player */}
-      <Player position={[70, 12.8, 50]} rotation={[0, -Math.PI / 1.5, 0]} />
+      <Player position={[70, 13, 50]} rotation={[0, -Math.PI / 1.5, 0]} />
 
       {/* Debug Animations */}
       <DebugAnimations />

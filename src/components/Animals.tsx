@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { Group } from "three";
+import * as THREE from "three"
 
 type AnimalProps = {
     path: string; // path to .glb file
@@ -12,6 +13,7 @@ type AnimalProps = {
 export default function Animal({ path, position = [0, 0, 0], scale = 1, rotation = [0, 0, 0] }: AnimalProps) {
     const group = useRef<Group>(null);
     const { scene, animations } = useGLTF(path);
+
     const { actions } = useAnimations(animations, group);
 
     React.useEffect(() => {
