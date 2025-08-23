@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sugarcane
+* source:	https://sketchfab.com/3d-models/sugarcane-9cce581fb3874e2a9dc516789c09b00f
+* author:	Lorna Inman (https://sketchfab.com/LornaInman)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sugarcane" (https://sketchfab.com/3d-models/sugarcane-9cce581fb3874e2a9dc516789c09b00f) by Lorna Inman (https://sketchfab.com/LornaInman) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

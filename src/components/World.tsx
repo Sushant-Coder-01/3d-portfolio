@@ -10,23 +10,23 @@ import Tree from "./Tree";
 import DebugAnimations from "./DebugAnimation";
 import { Physics, RigidBody } from "@react-three/rapier";
 import Player from "./Player";
+import Forest from "./Forest";
+import BanyanTree from "./BanyanTree";
+import RockGroup from "./Rocks";
+import Animal from "./Animals";
+import Lake from "./Lake";
+import { RiceField, SugarcaneField } from "./Farms";
 
 const World = () => {
   return (
     <Physics gravity={[0, -9.81, 0]}>
       <Lights />
       <Controls />
-        <Ground size={200} color="#3CB371" />
+      <Ground size={200} color="#3CB371" />
 
       {/* Roads */}
       <RigidBody type="fixed">
-        <Road width={4} length={50} position={[-30, 0.02, 5]} />
-      </RigidBody>
-      <RigidBody type="fixed">
-        <Road width={6} length={150} color="#333" position={[0, 0.01, -10]} />
-      </RigidBody>
-      <RigidBody type="fixed">
-        <Road width={2} length={30} color="#555" position={[-60, 0.01, 20]} />
+        <Road width={6} length={80} color="#333" position={[-25, 0.1, -10]} />
       </RigidBody>
 
       {/* Houses */}
@@ -58,7 +58,7 @@ const World = () => {
         <River width={5} length={75} position={[-12, 0, -50]} />
       </RigidBody>
       <RigidBody type="fixed">
-        <River width={5} length={30} position={[-85, 0, -36]} rotation={[Math.PI, -0.2, 0]} />
+        <River width={5} length={36} position={[-83, 0, -33]} rotation={[Math.PI, -0.5, 0]} />
       </RigidBody>
 
       {/* Bridges */}
@@ -94,7 +94,7 @@ const World = () => {
         <Tree position={[20, 0, -60]} height={5} />
       </RigidBody>
       <RigidBody type="fixed" colliders="trimesh">
-        <Tree position={[5, 0, -40]} height={5} />
+        <Tree position={[15, 0, -40]} height={5} />
       </RigidBody>
       <RigidBody type="fixed" colliders="trimesh">
         <Tree position={[0, 0, 0]} height={5} />
@@ -112,8 +112,99 @@ const World = () => {
         <Tree position={[-40, 0, 0]} height={5} />
       </RigidBody>
 
+      {/* A small forest */}
+      <Forest position={[-70, 0, -90]} count={30} areaSize={20} />
+
+      {/* A big dense forest */}
+      <RigidBody type="fixed" colliders="trimesh">
+        <Forest count={100} areaSize={40} position={[-75, 0, 78]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <BanyanTree position={[73, 12, 52]} scale={20} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={8} area={10} sizeRange={[1, 2]} color="dimgray" center={[5, 0, 5]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={20} area={12} sizeRange={[0.2, 0.6]} color="darkgray" center={[5, 0, 5]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={8} area={10} sizeRange={[1, 2]} color="dimgray" center={[50, 0, 5]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={20} area={12} sizeRange={[0.2, 0.6]} color="darkgray" center={[50, 0, 5]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={8} area={10} sizeRange={[1, 2]} color="dimgray" center={[50, 0, -30]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={20} area={12} sizeRange={[0.2, 0.6]} color="darkgray" center={[50, 0, -30]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={30} area={30} sizeRange={[1, 5]} color="dimgray" center={[-30, 0, -80]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={30} area={12} sizeRange={[0.2, 1]} color="darkgray" center={[-30, 0, -80]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={15} area={10} sizeRange={[1, 3]} color="dimgray" center={[-80, 0, 30]} />
+      </RigidBody>
+
+      <RigidBody type="fixed" colliders="trimesh">
+        <RockGroup count={20} area={12} sizeRange={[0.2, 0.6]} color="darkgray" center={[-80, 0, 30]} />
+      </RigidBody>
+
+      {/* Dog */}
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/dog/scene.gltf" position={[-15, 0, -5]} rotation={[0, Math.PI, 0]} scale={0.5} />
+      </RigidBody>
+
+      {/* Cow */}
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/cow/scene.gltf" position={[10, 0.2, 10]} scale={1} />
+      </RigidBody>
+
+      {/* Buffalo */}
+      <Animal path="/buffalo/scene.gltf" position={[5, 0, 4]} />
+
+      {/* Big central lake */}
+      <Lake position={[30, 0.02, 50]} width={60} height={60} waveStrength={0.01} />
+
+      {/* Small pond */}
+      <Lake position={[40, 0.02, -50]} width={30} height={30} waveStrength={0.01} />
+
+      <Lake position={[-63, 0.02, -50]} width={25} height={20} waveStrength={0.01} />
+
+      <Lake position={[-85, 0.02, -70]} width={30} height={26} waveStrength={0.01} />
+
+      <RiceField cols={40} rows={40} spacing={0.5} position={[-75, 0, 8]} />
+      <RiceField cols={40} rows={40} spacing={0.5} position={[-50, 0, 8]} />
+      <RiceField cols={40} rows={40} spacing={0.5} position={[-25, 0, 8]} />
+      <RiceField cols={40} rows={40} spacing={0.5} position={[-25, 0, 75]} />
+      <RiceField cols={40} rows={40} spacing={0.5} position={[-50, 0, 75]} />
+
+
+      <SugarcaneField cols={10} rows={10} position={[-10, -1, -80]} />
+      <SugarcaneField cols={10} rows={10} position={[15, -1, -80]} />
+      <SugarcaneField cols={10} rows={10} position={[40, -1, -80]} />
+      <SugarcaneField cols={10} rows={10} position={[65, -1, -80]} />
+      <SugarcaneField cols={10} rows={10} position={[15, -1, -80]} />
+      <SugarcaneField cols={10} rows={10} position={[80, -1, -50]} />
+      <SugarcaneField cols={10} rows={10} position={[80, -1, -20]} />
+
+
       {/* Player */}
-        <Player position={[70, 15, 50]} rotation={[0,-Math.PI /1.5, 0]}/>
+      <Player position={[70, 12.8, 50]} rotation={[0, -Math.PI / 1.5, 0]} />
 
       {/* Debug Animations */}
       <DebugAnimations />

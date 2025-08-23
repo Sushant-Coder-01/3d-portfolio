@@ -3,11 +3,11 @@ import { useEffect } from "react";
 
 export default function DebugAnimations() {
   const { animations } = useFBX("/standard_walk.fbx");
-  console.log(animations)
+  // console.log(animations)
   useEffect(() => {
-    console.log(
-      animations
-    );
+    // console.log(
+    //   animations
+    // );
   }, [animations]);
 
   return null;
