@@ -200,6 +200,7 @@ const World = () => {
 
       <Lake position={[-85, 0.02, -70]} width={30} height={26} waveStrength={0.01} />
 
+
       <RiceField cols={40} rows={40} spacing={0.5} position={[-75, 0, 8]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-50, 0, 8]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-25, 0, 8]} />
