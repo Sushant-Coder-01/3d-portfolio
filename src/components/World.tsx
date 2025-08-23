@@ -17,7 +17,8 @@ import Animal from "./Animals";
 import Lake from "./Lake";
 import { RiceField, SugarcaneField } from "./Farms";
 
-const World = () => {
+
+const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playerSpeed: number }) => {
   return (
     <Physics gravity={[0, -9.81, 0]}>
       <Lights />
@@ -169,7 +170,7 @@ const World = () => {
         <Animal path="/dog/scene.gltf" position={[-15, 0, -5]} rotation={[0, Math.PI, 0]} scale={0.5} />
       </RigidBody>
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/dog_cute/scene.gltf" position={[-40, 0, -15]} rotation={[0, 0, 0]} scale={0.5} />
+        <Animal path="/dog_puppy/scene.gltf" position={[-40, 0, -15]} rotation={[0, 0, 0]} scale={0.5} />
       </RigidBody>
 
       {/* Cow */}
@@ -218,7 +219,7 @@ const World = () => {
 
 
       {/* Player */}
-      <Player position={[70, 13, 50]} rotation={[0, -Math.PI / 1.5, 0]} />
+      <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1.5, 0]} cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
 
       {/* Debug Animations */}
       <DebugAnimations />

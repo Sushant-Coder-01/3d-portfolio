@@ -7,11 +7,15 @@ import * as THREE from "three";
 type PlayerProps = {
   position?: [number, number, number];
   rotation?: [number, number, number];
+  cameraAttached?: boolean,
+  playerSpeed?: number
 };
 
 const Player: React.FC<PlayerProps> = ({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
+  cameraAttached = true,
+  playerSpeed = 5
 }) => {
   const group = useRef<THREE.Group>(null);
   const bodyRef = useRef<RapierRigidBody>(null);
@@ -49,7 +53,7 @@ const Player: React.FC<PlayerProps> = ({
     }
   }, [actions, names]);
 
-  const speed = 5;
+  const speed = playerSpeed;
   const cameraOffset = new THREE.Vector3(0, 2, 5); // Behind & above player
 
   // For smooth camera start  
@@ -104,32 +108,35 @@ const Player: React.FC<PlayerProps> = ({
       if (walkAction) walkAction.timeScale = 0;
     }
 
-    // --- CAMERA FOLLOW ---
-    const translation = bodyRef.current.translation();
-    const playerPos = new THREE.Vector3(translation.x, translation.y, translation.z);
+    if (cameraAttached) {
 
-    // Rotate the offset so camera stays behind player
-    const rotatedOffset = cameraOffset
-      .clone()
-      .applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY);
+      // --- CAMERA FOLLOW ---
+      const translation = bodyRef.current.translation();
+      const playerPos = new THREE.Vector3(translation.x, translation.y, translation.z);
 
-    const targetCamPos = playerPos.clone().add(rotatedOffset);
+      // Rotate the offset so camera stays behind player
+      const rotatedOffset = cameraOffset
+        .clone()
+        .applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY);
 
-    // Smoothly move camera
-    if (!initialCameraSet.current) {
-      camera.position.copy(targetCamPos);
-      initialCameraSet.current = true;
-    } else {
-      camera.position.lerp(targetCamPos, 0.1);
+      const targetCamPos = playerPos.clone().add(rotatedOffset);
+
+      // Smoothly move camera
+      if (!initialCameraSet.current) {
+        camera.position.copy(targetCamPos);
+        initialCameraSet.current = true;
+      } else {
+        camera.position.lerp(targetCamPos, 0.1);
+      }
+
+      // 👀 Look slightly ahead of the player instead of at feet
+      const lookAtTarget = playerPos
+        .clone()
+        .add(new THREE.Vector3(0, 1.5, 0)) // look at chest/head height
+        .add(new THREE.Vector3(0, 0, -5).applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY)); // ahead in facing direction
+
+      camera.lookAt(lookAtTarget);
     }
-
-    // 👀 Look slightly ahead of the player instead of at feet
-    const lookAtTarget = playerPos
-      .clone()
-      .add(new THREE.Vector3(0, 1.5, 0)) // look at chest/head height
-      .add(new THREE.Vector3(0, 0, -5).applyAxisAngle(new THREE.Vector3(0, 1, 0), newRotationY)); // ahead in facing direction
-
-    camera.lookAt(lookAtTarget);
 
   });
 
