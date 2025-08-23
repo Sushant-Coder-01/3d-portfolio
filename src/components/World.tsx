@@ -63,10 +63,10 @@ const World = () => {
 
       {/* Bridges */}
       <RigidBody type="fixed">
-        <Bridge position={[5, 0.5, -52]} span={12} width={6} />
+        <Bridge position={[5, 0.5, -52]} rotation={[0, Math.PI / 2, 0]} span={12} width={6} />
       </RigidBody>
       <RigidBody type="fixed">
-        <Bridge position={[-20, 1, 48]} rotation={[0, -Math.PI / 1, 0]} span={16} width={12} color="#A9A9A9" railColor="#555" />
+        <Bridge position={[-20, 1, 48]} rotation={[0, -Math.PI / 2, 0]} span={16} width={12} color="#A9A9A9" railColor="#555" />
       </RigidBody>
 
       {/* Hills */}
