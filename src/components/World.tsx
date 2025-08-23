@@ -16,6 +16,7 @@ import RockGroup from "./Rocks";
 import Animal from "./Animals";
 import Lake from "./Lake";
 import { RiceField, SugarcaneField } from "./Farms";
+import { Suspense } from "react";
 
 
 const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playerSpeed: number }) => {
@@ -40,7 +41,6 @@ const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playe
       <RigidBody type="fixed">
         <House position={[-50, 0, -18]} width={7} depth={6} height={4} color="#deb887" />
       </RigidBody>
-
       <RigidBody type="fixed">
         <House position={[-8, 0, -2]} rotation={[0, Math.PI, 0]} width={7} depth={6} height={4} roofColor="#a52a2a" />
       </RigidBody>
@@ -166,30 +166,32 @@ const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playe
       </RigidBody>
 
       {/* Dog */}
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/dog/scene.gltf" position={[-15, 0, -5]} rotation={[0, Math.PI, 0]} scale={0.5} />
-      </RigidBody>
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/dog_puppy/scene.gltf" position={[-40, 0, -15]} rotation={[0, 0, 0]} scale={0.5} />
-      </RigidBody>
+      <Suspense fallback={null}>
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/dog/scene.gltf" position={[-15, 0, -5]} rotation={[0, Math.PI, 0]} scale={0.5} />
+        </RigidBody>
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/dog_puppy/scene.gltf" position={[-40, 0, -15]} rotation={[0, 0, 0]} scale={0.5} />
+        </RigidBody>
 
-      {/* Cow */}
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/cow/scene.gltf" position={[25, 0.2, 5]} scale={1} />
-      </RigidBody>
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/cow2/scene.gltf" position={[20, 0.2, 10]} scale={0.1} />
-      </RigidBody>
+        {/* Cow */}
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/cow/scene.gltf" position={[25, 0.2, 5]} scale={1} />
+        </RigidBody>
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/cow2/scene.gltf" position={[20, 0.2, 10]} scale={0.1} />
+        </RigidBody>
 
-      {/* Horse */}
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/horse/scene.gltf" position={[20, 0.2, -3]} rotation={[0, Math.PI / 2, 0]} scale={1} />
-      </RigidBody>
+        {/* Horse */}
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/horse/scene.gltf" position={[20, 0.2, -3]} rotation={[0, Math.PI / 2, 0]} scale={1} />
+        </RigidBody>
 
-      {/* Buffalo */}
-      <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/african_buffalo/scene.gltf" position={[30, 0.2, -24]} rotation={[0, Math.PI, 0]} scale={0.2} />
-      </RigidBody>
+        {/* Buffalo */}
+        <RigidBody type="fixed" colliders="trimesh">
+          <Animal path="/african_buffalo/scene.gltf" position={[30, 0.2, -24]} rotation={[0, Math.PI, 0]} scale={0.2} />
+        </RigidBody>
+      </Suspense>
 
       {/* Big central lake */}
       <Lake position={[30, 0.02, 50]} width={60} height={60} waveStrength={0.01} />
@@ -201,13 +203,11 @@ const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playe
 
       <Lake position={[-85, 0.02, -70]} width={30} height={26} waveStrength={0.01} />
 
-
       <RiceField cols={40} rows={40} spacing={0.5} position={[-75, 0, 8]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-50, 0, 8]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-25, 0, 8]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-25, 0, 75]} />
       <RiceField cols={40} rows={40} spacing={0.5} position={[-50, 0, 75]} />
-
 
       <SugarcaneField cols={10} rows={10} position={[-10, -1, -80]} />
       <SugarcaneField cols={10} rows={10} position={[15, -1, -80]} />
@@ -217,10 +217,10 @@ const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playe
       <SugarcaneField cols={10} rows={10} position={[80, -1, -50]} />
       <SugarcaneField cols={10} rows={10} position={[80, -1, -20]} />
 
-
       {/* Player */}
-      <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1.5, 0]} cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
-
+      <Suspense fallback={null}>
+        <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1, 0]} cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
+      </Suspense>
       {/* Debug Animations */}
       <DebugAnimations />
     </Physics>

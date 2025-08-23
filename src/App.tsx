@@ -1,17 +1,116 @@
-// App.tsx or Home.tsx
+// App.tsx
 import { Canvas } from "@react-three/fiber";
 import World from "./components/World";
 import { Suspense, useState } from "react";
-import { Cloud, ContactShadows, Sky } from "@react-three/drei";
-import "./app.css"
+import { Cloud, ContactShadows, Sky, Html, useProgress, useFBX, useGLTF } from "@react-three/drei";
+
+useFBX.preload("/standard_walk.fbx");
+useGLTF.preload("/sugarcane/scene.gltf")
+useGLTF.preload("/dog/scene.gltf")
+useGLTF.preload("/dog_puppy/scene.gltf")
+useGLTF.preload("/cow/scene.gltf")
+useGLTF.preload("/cow2/scene.gltf")
+useGLTF.preload("/horse/scene.gltf")
+useGLTF.preload("/labrador_dog/scene.gltf")
+useGLTF.preload("/rice_plant/scene.gltf")
+
+
+
+export function Loader() {
+  const { progress } = useProgress();
+
+  return (
+    <Html center>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgba(135, 206, 235, 0.5)",
+          padding: "30px",
+          borderRadius: "12px",
+          width: "2000px",
+          height: "100dvh",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Faint background image */}
+        <img
+          src="/3d_village.png"
+          alt="Village Background"
+          style={{
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 0.15, // faint effect
+            zIndex: 0,
+          }}
+        />
+
+        {/* Foreground loader content */}
+        <div
+          style={{
+            border: "5px solid rgba(0,0,0,0.1)",
+            borderLeftColor: "#333",
+            borderRadius: "50%",
+            width: "60px",
+            height: "60px",
+            animation: "spin 1s linear infinite",
+            marginBottom: "15px",
+            zIndex: 1,
+          }}
+        />
+
+        <p
+          style={{
+            fontSize: "18px",
+            fontWeight: "bold",
+            margin: 0,
+            color: "#111",
+            zIndex: 1,
+          }}
+        >
+          Loading Village... {Math.round(progress)}%
+        </p>
+
+        <style>{`
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
+      </div>
+    </Html>
+
+  );
+}
+
+
 
 function App() {
   const [cameraAttached, setCameraAttached] = useState(true);
   const [playerSpeed, setPlayerSpeed] = useState(5);
+
   return (
     <>
       {/* UI Overlay */}
-      <div className="ui-panel" style={{ position: "absolute", zIndex: 100, padding: "2px" }}>
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 100,
+          padding: "8px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          background: "rgba(255,255,255,0.7)",
+          borderRadius: "6px",
+        }}
+      >
         <label>
           <input
             type="checkbox"
@@ -21,7 +120,7 @@ function App() {
           Attach Camera to Player
         </label>
 
-        <label>
+        <label style={{ display: "flex", flexDirection: "column" }}>
           Player Speed: {playerSpeed.toFixed(1)}
           <input
             type="range"
@@ -33,49 +132,29 @@ function App() {
           />
         </label>
       </div>
-      <Canvas
-        camera={{ position: [0, 10, 20], fov: 40 }}
-        style={{ height: "100dvh", background: "skyblue" }}
-      >
-        <Suspense fallback={null}>
-          {/* Sky with sun */}
-          <Sky
-            sunPosition={[50, 40, -20]} // Sun position in the sky
-            turbidity={8}              // haziness
-            rayleigh={6}               // blue scattering
-            mieCoefficient={0.005}     // atmospheric dust
-            mieDirectionalG={0.8}      // glow around sun
-          />
 
-          {/* A subtle Sun Light */}
-          <directionalLight
-            intensity={2}
-            position={[100, 50, 100]}
-            castShadow
-          />
+      <Canvas camera={{ position: [0, 10, 20], fov: 40 }} style={{ height: "100dvh" }}>
+        <Suspense fallback={<Loader />}>
+          {/* Sky with sun */}
+          <Sky sunPosition={[50, 40, -20]} turbidity={8} rayleigh={6} mieCoefficient={0.005} mieDirectionalG={0.8} />
+          {/* Lights */}
+          <directionalLight intensity={2} position={[100, 50, 100]} castShadow />
           <ambientLight intensity={0.3} />
 
-          <ContactShadows
-            position={[0, -1, 0]}
-            opacity={0.6}
-            scale={10}
-            blur={2.5}
-            far={4.5}
-          />
+          {/* Ground / Shadows */}
+          <ContactShadows position={[0, -1, 0]} opacity={0.6} scale={10} blur={2.5} far={4.5} />
 
-          {/* Ground / World */}
-          <World cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
+          {/* World */}
+          <Suspense fallback={null}>
+            <World cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
+          </Suspense>
 
-          {/* Cloud layer 1 - distant, large & soft */}
+          {/* Clouds */}
           <Cloud position={[0, 30, 100]} speed={0.2} opacity={0.4} scale={5} />
           <Cloud position={[30, 35, 80]} speed={0.25} opacity={0.35} scale={4} />
-
-          {/* Cloud layer 2 - closer, smaller */}
           <Cloud position={[-20, 31, -30]} speed={0.3} opacity={0.45} scale={3} />
           <Cloud position={[15, 33, 40]} speed={0.35} opacity={0.4} scale={4} />
           <Cloud position={[40, 37, -50]} speed={0.25} opacity={0.3} scale={5} />
-
-          {/* Cloud layer 3 - scattered, more depth */}
           <Cloud position={[-40, 30, -70]} speed={0.2} opacity={0.3} scale={7} />
           <Cloud position={[60, 32, -90]} speed={0.3} opacity={0.35} scale={6} />
         </Suspense>
