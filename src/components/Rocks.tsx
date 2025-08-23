@@ -1,5 +1,4 @@
-import React from "react";
-import * as THREE from "three";
+
 
 type RockGroupProps = {
     count?: number; // how many rocks

@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { Group } from "three";
-import * as THREE from "three"
 
 type AnimalProps = {
     path: string; // path to .glb file

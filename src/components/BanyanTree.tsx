@@ -2,6 +2,7 @@ import { useGLTF } from "@react-three/drei";
 
 type TreeProps = {
     scale?: number;
+    position?: [number, number, number],
 };
 
 export default function BanyanTree({ position = [0, 0, 0], scale = 1, ...props }: TreeProps) {

@@ -1,8 +1,16 @@
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
+type FieldProps = {
+    rows?: number;
+    cols?: number;
+    spacing?: number;
+    position?: [number, number, number]; // ✅ Explicit tuple type
+};
+
+
 // 🌾 Rice Field with Ground
-export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 0, 0] }) {
+export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 0, 0] }: FieldProps) {
     const { scene } = useGLTF("/rice_plant/scene.gltf");
 
     const riceModel = scene.clone();
@@ -52,7 +60,7 @@ export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 
 }
 
 // 🌱 Sugarcane Field with Ground
-export function SugarcaneField({ rows = 10, cols = 10, spacing = 2, position = [0, 0, 0] }) {
+export function SugarcaneField({ rows = 10, cols = 10, spacing = 2, position = [0, 0, 0] }: FieldProps) {
     const { scene } = useGLTF("/sugarcane/scene.gltf");
 
     return (

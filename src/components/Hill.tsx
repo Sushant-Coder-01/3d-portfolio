@@ -15,7 +15,6 @@ interface HillProps {
 
 const Hill: React.FC<HillProps> = ({
   position = [0, 0, 0],
-  rotation = [0, 0, 0],
   width = 50,
   depth = 50,
   height = 8,
