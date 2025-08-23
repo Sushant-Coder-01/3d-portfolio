@@ -34,7 +34,7 @@ const River: React.FC<RiverProps> = ({
 
   const tubeGeometry = useMemo(() => {
     const geo = new THREE.TubeGeometry(curve, 100, width / 2, 16, false);
-    geo.scale(1, 0.2, 1); // Flatten to look like a river
+    geo.scale(1, 0.01, 1); // Flatten to look like a river
     geo.computeVertexNormals();
     return geo;
   }, [curve, width]);
