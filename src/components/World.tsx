@@ -31,13 +31,13 @@ const World = () => {
 
       {/* Houses */}
       <RigidBody type="fixed">
-        <House position={[-30, 0, -18]} width={6} depth={5} height={3.5} />
+        <House position={[-30, 0, -18]} width={7} depth={6} height={4} />
       </RigidBody>
       <RigidBody type="fixed">
         <House position={[-8, 0, -18]} width={7} depth={6} height={4} roofColor="#a52a2a" />
       </RigidBody>
       <RigidBody type="fixed">
-        <House position={[-50, 0, -18]} width={3} depth={3} height={2.5} color="#deb887" />
+        <House position={[-50, 0, -18]} width={7} depth={6} height={4} color="#deb887" />
       </RigidBody>
 
       <RigidBody type="fixed">
@@ -168,23 +168,26 @@ const World = () => {
       <RigidBody type="fixed" colliders="trimesh">
         <Animal path="/dog/scene.gltf" position={[-15, 0, -5]} rotation={[0, Math.PI, 0]} scale={0.5} />
       </RigidBody>
+      <RigidBody type="fixed" colliders="trimesh">
+        <Animal path="/dog_cute/scene.gltf" position={[-40, 0, -15]} rotation={[0, 0, 0]} scale={0.5} />
+      </RigidBody>
 
       {/* Cow */}
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/cow/scene.gltf" position={[20, 0.2, 10]} scale={1} />
+        <Animal path="/cow/scene.gltf" position={[25, 0.2, 5]} scale={1} />
       </RigidBody>
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/cow2/scene.gltf" position={[18, 0.2, 10]} scale={0.1} />
+        <Animal path="/cow2/scene.gltf" position={[20, 0.2, 10]} scale={0.1} />
       </RigidBody>
 
       {/* Horse */}
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/horse/scene.gltf" position={[0, 0.2, 10]} scale={1} />
+        <Animal path="/horse/scene.gltf" position={[20, 0.2, -3]} rotation={[0, Math.PI / 2, 0]} scale={1} />
       </RigidBody>
 
       {/* Buffalo */}
       <RigidBody type="fixed" colliders="trimesh">
-        <Animal path="/african_buffalo/scene.gltf" position={[3, 0.2, 10]} scale={0.2} />
+        <Animal path="/african_buffalo/scene.gltf" position={[30, 0.2, -24]} rotation={[0, Math.PI, 0]} scale={0.2} />
       </RigidBody>
 
       {/* Big central lake */}
