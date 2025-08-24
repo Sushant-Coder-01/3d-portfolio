@@ -1,5 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { useMemo } from "react";
 
 type FieldProps = {
     rows?: number;
@@ -8,36 +9,46 @@ type FieldProps = {
     position?: [number, number, number]; // ✅ Explicit tuple type
 };
 
-
 // 🌾 Rice Field with Ground
-export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 0, 0] }: FieldProps) {
+export function RiceField({
+    rows = 10,
+    cols = 10,
+    spacing = 0.5,
+    position = [0, 0, 0],
+}: FieldProps) {
     const { scene } = useGLTF("/rice_plant/scene.gltf");
 
-    const riceModel = scene.clone();
-    riceModel.traverse((child: any) => {
-        if (child.isMesh) {
-            const green = new THREE.Color("#228B22"); // dark green
-            const gold = new THREE.Color("#FFD700");  // golden yellow
+    // ✅ Memoize rice model setup so it’s not re-created every render
+    const riceModel = useMemo(() => {
+        const clone = scene.clone();
+        clone.traverse((child: any) => {
+            if (child.isMesh) {
+                const green = new THREE.Color("#228B22"); // dark green
+                const gold = new THREE.Color("#FFD700"); // golden yellow
 
-            // Mix mostly green, small touch of gold
-            const mixedColor = green.clone().lerp(gold, Math.random() * 0.4); // 0–20% gold
+                // Mix mostly green, small touch of gold
+                const mixedColor = green.clone().lerp(gold, Math.random() * 0.4);
 
-            child.material = new THREE.MeshStandardMaterial({
-                color: mixedColor,
-                roughness: 0.8,
-                metalness: 0.2,
-            });
-        }
-    });
-
-
+                child.material = new THREE.MeshStandardMaterial({
+                    color: mixedColor,
+                    roughness: 0.8,
+                    metalness: 0.2,
+                });
+            }
+        });
+        return clone;
+    }, [scene]);
 
     return (
         <group position={position}>
             {/* Ground Plane */}
             <mesh
                 rotation={[-Math.PI / 2, 0, 0]}
-                position={[(rows - 1) * spacing / 2, 0.02, (cols - 1) * spacing / 2]}
+                position={[
+                    (rows - 1) * spacing / 2,
+                    0.02,
+                    (cols - 1) * spacing / 2,
+                ]}
             >
                 <planeGeometry args={[rows * spacing, cols * spacing]} />
                 <meshStandardMaterial color="#654321" />
@@ -60,15 +71,27 @@ export function RiceField({ rows = 10, cols = 10, spacing = 0.5, position = [0, 
 }
 
 // 🌱 Sugarcane Field with Ground
-export function SugarcaneField({ rows = 10, cols = 10, spacing = 2, position = [0, 0, 0] }: FieldProps) {
+export function SugarcaneField({
+    rows = 10,
+    cols = 10,
+    spacing = 2,
+    position = [0, 0, 0],
+}: FieldProps) {
     const { scene } = useGLTF("/sugarcane/scene.gltf");
+
+    // ✅ Memoize sugarcane model too
+    const sugarcaneModel = useMemo(() => scene.clone(), [scene]);
 
     return (
         <group position={position}>
             {/* Ground Plane */}
             <mesh
                 rotation={[-Math.PI / 2, 0, 0]}
-                position={[(rows - 3) * spacing / 2, 1.02, -(cols - 3) * spacing / 2]}
+                position={[
+                    (rows - 3) * spacing / 2,
+                    1.02,
+                    -(cols - 3) * spacing / 2,
+                ]}
             >
                 <planeGeometry args={[rows * spacing, cols * spacing]} />
                 <meshStandardMaterial color="#654321" />
@@ -79,7 +102,7 @@ export function SugarcaneField({ rows = 10, cols = 10, spacing = 2, position = [
                 Array.from({ length: cols }).map((_, col) => (
                     <primitive
                         key={`${row}-${col}`}
-                        object={scene.clone()}
+                        object={sugarcaneModel.clone()}
                         position={[col * spacing, 0, row * -spacing]}
                         scale={[0.6, 0.6, 0.6]}
                     />

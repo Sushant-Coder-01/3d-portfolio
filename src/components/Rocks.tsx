@@ -1,4 +1,5 @@
-
+import { useMemo } from "react";
+import * as THREE from "three";
 
 type RockGroupProps = {
     count?: number; // how many rocks
@@ -15,39 +16,50 @@ export default function RockGroup({
     color = "gray",
     center = [0, 0, 0],
 }: RockGroupProps) {
+    // ✅ Generate random rock transforms once
+    const rocks = useMemo(() => {
+        return Array.from({ length: count }).map((_, i) => {
+            const scale =
+                sizeRange[0] + Math.random() * (sizeRange[1] - sizeRange[0]);
+
+            const rotation: [number, number, number] = [
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+            ];
+
+            const position: [number, number, number] = [
+                center[0] + (Math.random() - 0.5) * area,
+                center[1],
+                center[2] + (Math.random() - 0.5) * area,
+            ];
+
+            return { scale, rotation, position, key: i };
+        });
+    }, [count, area, sizeRange, center]);
+
+    // ✅ Reuse one material for all rocks
+    const material = useMemo(
+        () => new THREE.MeshStandardMaterial({ color, flatShading: true }),
+        [color]
+    );
+
     return (
-        <>
-            {Array.from({ length: count }).map((_, i) => {
-                const scale =
-                    sizeRange[0] + Math.random() * (sizeRange[1] - sizeRange[0]);
-
-                const rotation: [number, number, number] = [
-                    Math.random() * Math.PI,
-                    Math.random() * Math.PI,
-                    Math.random() * Math.PI,
-                ];
-
-                const position: [number, number, number] = [
-                    center[0] + (Math.random() - 0.5) * area,
-                    center[1],
-                    center[2] + (Math.random() - 0.5) * area,
-                ];
-
-                return (
-                    <mesh
-                        key={i}
-                        position={position}
-                        rotation={rotation}
-                        scale={scale}
-                        castShadow
-                        receiveShadow
-                    >
-                        {/* Icosahedron gives a low-poly rock feel */}
-                        <icosahedronGeometry args={[0.5, 0]} />
-                        <meshStandardMaterial color={color} flatShading />
-                    </mesh>
-                );
-            })}
-        </>
+        <group>
+            {rocks.map(({ key, position, rotation, scale }) => (
+                <mesh
+                    key={key}
+                    position={position}
+                    rotation={rotation}
+                    scale={scale}
+                    castShadow
+                    receiveShadow
+                    material={material}
+                >
+                    {/* Icosahedron gives a low-poly rock feel */}
+                    <icosahedronGeometry args={[0.5, 0]} />
+                </mesh>
+            ))}
+        </group>
     );
 }
