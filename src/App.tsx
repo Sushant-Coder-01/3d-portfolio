@@ -101,8 +101,6 @@ function App() {
   const cameraAttached = useGameStore((state) => state.cameraAttached);
   const playerSpeed = useGameStore((state) => state.playerSpeed);
 
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
   const handleMove = (event: IJoystickUpdateEvent) => {
 
     useGameStore.getState().setMoveInput({
@@ -159,17 +157,17 @@ function App() {
         </label>
       </div>
 
-      {isMobile && (
-        <div style={{ position: "absolute", bottom: 40, left: 40, zIndex: 100 }}>
-          <Joystick
-            size={100}
-            baseColor="#888"
-            stickColor="#555"
-            move={handleMove}
-            stop={handleStop}
-          />
-        </div>
-      )}
+      (
+      <div style={{ position: "absolute", bottom: 40, left: 40, zIndex: 100 }}>
+        <Joystick
+          size={100}
+          baseColor="#888"
+          stickColor="#555"
+          move={handleMove}
+          stop={handleStop}
+        />
+      </div>
+      )
 
 
 
