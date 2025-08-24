@@ -157,8 +157,7 @@ function App() {
         </label>
       </div>
 
-      (
-      <div style={{ position: "absolute", bottom: 40, left: 40, zIndex: 100 }}>
+      <div style={{ position: "absolute", bottom: 40, right: 30, zIndex: 100 }}>
         <Joystick
           size={100}
           baseColor="#888"
@@ -167,7 +166,6 @@ function App() {
           stop={handleStop}
         />
       </div>
-      )
 
 
 
