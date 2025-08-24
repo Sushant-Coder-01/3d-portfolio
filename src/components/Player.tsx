@@ -3,20 +3,20 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useFBX, useAnimations } from "@react-three/drei";
 import { RigidBody, RapierRigidBody, CapsuleCollider } from "@react-three/rapier";
 import * as THREE from "three";
+import { useGameStore } from "../store/playerStore";
 
 type PlayerProps = {
   position?: [number, number, number];
   rotation?: [number, number, number];
-  cameraAttached?: boolean,
-  playerSpeed?: number
 };
 
 const Player: React.FC<PlayerProps> = ({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
-  cameraAttached = true,
-  playerSpeed = 5
 }) => {
+  const cameraAttached = useGameStore((state) => state.cameraAttached);
+  const playerSpeed = useGameStore((state) => state.playerSpeed);
+  const moveInput = useGameStore((state) => state.moveInput);
   const group = useRef<THREE.Group>(null);
   const bodyRef = useRef<RapierRigidBody>(null);
   const { camera } = useThree();
@@ -63,10 +63,11 @@ const Player: React.FC<PlayerProps> = ({
     if (!bodyRef.current || !group.current) return;
 
     // Movement input
-    const forward = keys["w"] || keys["arrowup"];
-    const back = keys["s"] || keys["arrowdown"];
-    const left = keys["a"] || keys["arrowleft"];
-    const right = keys["d"] || keys["arrowright"];
+    const forward = (keys["w"] || keys["arrowup"] || moveInput?.forward) ?? false;
+    const back = (keys["s"] || keys["arrowdown"] || moveInput?.back) ?? false;
+    const left = (keys["a"] || keys["arrowleft"] || moveInput?.left) ?? false;
+    const right = (keys["d"] || keys["arrowright"] || moveInput?.right) ?? false;
+
 
     const walkAction = actions[names[0]];
 

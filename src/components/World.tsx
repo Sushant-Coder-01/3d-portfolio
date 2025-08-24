@@ -19,7 +19,7 @@ import { RiceField, SugarcaneField } from "./Farms";
 import { Suspense } from "react";
 
 
-const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playerSpeed: number }) => {
+const World = () => {
   return (
     <Physics gravity={[0, -9.81, 0]}>
       <Lights />
@@ -219,7 +219,7 @@ const World = ({ cameraAttached, playerSpeed }: { cameraAttached: boolean, playe
 
       {/* Player */}
       <Suspense fallback={null}>
-        <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1, 0]} cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
+        <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1, 0]} />
       </Suspense>
       {/* Debug Animations */}
       <DebugAnimations />

@@ -1,8 +1,11 @@
 // App.tsx
 import { Canvas } from "@react-three/fiber";
 import World from "./components/World";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { Cloud, ContactShadows, Sky, Html, useProgress, useFBX, useGLTF } from "@react-three/drei";
+import { Joystick } from "react-joystick-component";
+import type { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick";
+import { useGameStore } from "./store/playerStore";
 
 useFBX.preload("/standard_walk.fbx");
 useGLTF.preload("/sugarcane/scene.gltf")
@@ -93,8 +96,31 @@ export function Loader() {
 
 
 function App() {
-  const [cameraAttached, setCameraAttached] = useState(true);
-  const [playerSpeed, setPlayerSpeed] = useState(5);
+  const setCameraAttached = useGameStore((state) => state.setCameraAttached);
+  const setPlayerSpeed = useGameStore((state) => state.setPlayerSpeed);
+  const cameraAttached = useGameStore((state) => state.cameraAttached);
+  const playerSpeed = useGameStore((state) => state.playerSpeed);
+
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+  const handleMove = (event: IJoystickUpdateEvent) => {
+
+    useGameStore.getState().setMoveInput({
+      forward: event.direction === "FORWARD",
+      back: event.direction === "BACKWARD",
+      left: event.direction === "LEFT",
+      right: event.direction === "RIGHT",
+    });
+  };
+
+  const handleStop = () => {
+    useGameStore.getState().setMoveInput({
+      forward: false,
+      back: false,
+      left: false,
+      right: false,
+    });
+  };
 
   return (
     <>
@@ -133,6 +159,20 @@ function App() {
         </label>
       </div>
 
+      {isMobile && (
+        <div style={{ position: "absolute", bottom: 40, left: 40, zIndex: 100 }}>
+          <Joystick
+            size={100}
+            baseColor="#888"
+            stickColor="#555"
+            move={handleMove}
+            stop={handleStop}
+          />
+        </div>
+      )}
+
+
+
       <Canvas camera={{ position: [0, 10, 20], fov: 40 }} style={{ height: "100dvh" }}>
         <Suspense fallback={<Loader />}>
           {/* Sky with sun */}
@@ -146,7 +186,7 @@ function App() {
 
           {/* World */}
           <Suspense fallback={null}>
-            <World cameraAttached={cameraAttached} playerSpeed={playerSpeed} />
+            <World />
           </Suspense>
 
           {/* Clouds */}
