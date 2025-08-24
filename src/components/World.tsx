@@ -217,11 +217,9 @@ const World = () => {
       <SugarcaneField cols={10} rows={10} position={[80, -1, -50]} />
       <SugarcaneField cols={10} rows={10} position={[80, -1, -20]} />
 
-      {/* Player */}
       <Suspense fallback={null}>
         <Player position={[70, 20, 50]} rotation={[0, -Math.PI / 1, 0]} />
       </Suspense>
-      {/* Debug Animations */}
       <DebugAnimations />
     </Physics>
   );
